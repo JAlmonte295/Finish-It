@@ -32,6 +32,52 @@ router.post("/sign-up", async (req, res) => {
     console.log(error);
     res.status(500).send("Something went wrong.");
   }
+    req.session.user = {
+        username: user.username,
+    };
+    req.session.save(() => {
+        res.redirect("/");
+    });
+
+});
+
+router.get("/sign-in", (req, res) => {
+  res.render("auth/sign-in.ejs");
+});
+
+router.post("/sign-in", async (req, res) => {
+    const userInDatabase = await User.findOne({ username: req.body.username });
+
+    if (!userInDatabase) {
+      return res.send("Username not found.");
+    }
+
+    const isPasswordCorrect = bcrypt.compareSync(
+      req.body.password,
+      userInDatabase.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res.send("Incorrect password.");
+    }
+
+    req.session.user = {
+        username: userInDatabase.username,
+        id: userInDatabase._id,
+    };
+
+    req.session.save(() => {
+        res.redirect("/");
+    });
+
+    res.send(`Welcome back ${userInDatabase.username}`);
+});
+
+router.get("/sign-out", (req, res) => {
+    req.session.destroy(() => {
+        res.redirect("/");
+    });
+
 });
 
 module.exports = router;

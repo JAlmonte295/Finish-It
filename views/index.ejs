@@ -8,8 +8,16 @@
     <title>Finish it! - Home Page</title>
   </head>
   <body>
-    <h1>Welcome to Finish it! A backlog manager for your videogames!</h1>
-    <a href="/auth/sign-up">Sign up</a>
-
+    <% if (user) { %>
+        <h1>Welcome to the app, <%= user.username %>!</h1>
+        <p>
+            <a href="/auth/sign-out">Sign out</a>
+        </p>
+        <% } else { %>
+            <h1>Welcome to the app, guest.</h1>
+            <p>
+                <a href="/auth/sign-up">Sign up</a> or <a href="/auth/sign-in">sign in</a>.
+            </p>
+            <% } %>
   </body>
 </html>
