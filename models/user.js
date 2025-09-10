@@ -2,18 +2,6 @@
 
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  applications: [applicationSchema],
-});
-
 const applicationSchema = new mongoose.Schema({
     title: {
     type: String,
@@ -32,6 +20,19 @@ const applicationSchema = new mongoose.Schema({
     enum: ['Pending', 'In Progress', 'Completed'],
   }
 });
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  applications: [applicationSchema],
+});
+
 
 const User = mongoose.model("User", userSchema);
 

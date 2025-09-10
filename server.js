@@ -4,16 +4,18 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 
-
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const morgan = require("morgan");
-
-const port = process.env.PORT ? process.env.PORT : "5001";
+const applicationsController = require('./controllers/applications.js');
 
 const authController = require("./controllers/auth.js");
 const MongoStore = require("connect-mongo");
 
+const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require('./middleware/pass-user-to-view.js');
+
+const port = process.env.PORT ? process.env.PORT : "5001";
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -37,15 +39,23 @@ app.use(
   })
 );
 
+app.use(passUserToView);
 
 // GET //
 app.get("/", (req, res) => {
-  res.render("index.ejs", {
-    user: req.session.user,
+  if (req.session.user) {
+    res.redirect(`/users/${req.session.user._id}/applications`);
+  } else {
+    res.render("index.ejs", {
   });
+  }
 });
 
 app.use("/auth", authController);
+app.use(isSignedIn);
+app.use('/users/:userId/applications', applicationsController);
+
+app.use(isSignedIn);
 
 
 
