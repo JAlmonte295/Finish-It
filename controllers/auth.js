@@ -27,18 +27,19 @@ router.post("/sign-up", async (req, res) => {
     req.body.password = hashedPassword;
 
     const user = await User.create(req.body);
-    res.send(`Thanks for signing up ${user.username}`);
+    // After creating the user, log them in by creating a session
+    req.session.user = {
+      username: user.username,
+      id: user._id,
+    };
+    // and redirect to the home page
+    req.session.save(() => {
+      res.redirect("/");
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong.");
   }
-    req.session.user = {
-        username: user.username,
-    };
-    req.session.save(() => {
-        res.redirect("/");
-    });
-
 });
 
 router.get("/sign-in", (req, res) => {
@@ -46,31 +47,31 @@ router.get("/sign-in", (req, res) => {
 });
 
 router.post("/sign-in", async (req, res) => {
+  try {
     const userInDatabase = await User.findOne({ username: req.body.username });
 
     if (!userInDatabase) {
       return res.send("Username not found.");
     }
 
-    const isPasswordCorrect = bcrypt.compareSync(
-      req.body.password,
-      userInDatabase.password
-    );
+    const isPasswordCorrect = bcrypt.compareSync(req.body.password, userInDatabase.password);
 
     if (!isPasswordCorrect) {
       return res.send("Incorrect password.");
     }
 
     req.session.user = {
-        username: userInDatabase.username,
-        id: userInDatabase._id,
+      username: userInDatabase.username,
+      id: userInDatabase._id,
     };
 
     req.session.save(() => {
-        res.redirect("/");
+      res.redirect("/");
     });
-
-    res.send(`Welcome back ${userInDatabase.username}`);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Something went wrong.");
+  }
 });
 
 router.get("/sign-out", (req, res) => {
