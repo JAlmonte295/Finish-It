@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Game: <%= game.title %></title>
+  </head>
+  <body>
+    <%- include('../partials/_navbar.ejs') %>
+    <h1>Edit Game: <%= game.title %></h1>
+    <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=PUT" method="POST">
+      <label for="title">Title:</label>
+      <input type="text" name="title" id="title" value="<%= game.title %>" />
+      <label for="platform">Platform:</label>
+      <input type="text" name="platform" id="platform" value="<%= game.platform %>" />
+      <label for="date">Date:</label>
+      <input type="date" name="date" id="date"  value="<%= game.date.toISOString().split('T')[0] %>" />
+      <label for="status">Status:</label>
+        <select name="status" id="status">
+      <option value="Pending" <%= game.status === 'Pending' ? 'selected' : '' %> >Pending</option>
+      <option value="In Progress" <%= game.status === 'In Progress' ? 'selected' : '' %> >In Progress</option>
+      <option value="Completed" <%= game.status === 'Completed' ? 'selected' : '' %> >Completed</option>
+      <option value="Dropped" <%= game.status === 'Dropped' ? 'selected' : '' %> >Dropped</option>
+        </select>
+      <button type="submit">Update Game</button>
+    </form>
+  </body>
+</html>
