@@ -9,7 +9,7 @@ const morgan = require("morgan");
 const MongoStore = require("connect-mongo");
 
 // Route Imports
-const applicationsController = require('./controllers/applications.js');
+const gamesController = require('./controllers/games.js');
 const authController = require("./controllers/auth.js");
 
 // Middleware Imports
@@ -39,6 +39,10 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGODB_URI,
     }),
+    cookie: {
+      // Session expires after 1 day
+      maxAge: 1000 * 60 * 60 * 24 * 1,
+    },
   })
 );
 app.use(passUserToView);
@@ -46,7 +50,7 @@ app.use(passUserToView);
 // Routes
 app.get("/", (req, res) => {
   if (req.session.user) {
-    res.redirect(`/users/${req.session.user.id}/applications`);
+    res.redirect(`/users/${req.session.user.id}/games`);
   } else {
     res.render("index.ejs", {
   });
@@ -55,7 +59,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authController);
 app.use(isSignedIn);
-app.use('/users/:userId/applications', applicationsController); // All routes here will be protected
+app.use('/users/:userId/games', gamesController); // All routes here will be protected
 
 // Server Listening
 app.listen(port, () => {

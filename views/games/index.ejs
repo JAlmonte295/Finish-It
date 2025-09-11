@@ -1,0 +1,28 @@
+<!-- views/games/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Games</title>
+  </head>
+  <body>
+    <%- include('../partials/_navbar.ejs') %>
+    <h1>Your Games</h1>
+    <a href="/users/<%=user.id%>/games/new">Add a Game</a>
+
+    <ul>
+      <% games.forEach(game => { %>
+      <li>
+        <a href="/users/<%=user.id%>/games/<%=game.id%>">View Details</a> |
+        
+        <strong>Title:</strong> <%= game.title %> |
+        <strong>Platform:</strong> <%= game.platform %> |
+        <strong>Date:</strong> <%= game.date.toDateString() %> |
+        <strong>Status:</strong> <%= game.status %>
+      </li>
+      <% }) %>
+    </ul>
+  </body>
+</html>

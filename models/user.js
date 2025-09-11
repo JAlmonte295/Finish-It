@@ -2,7 +2,7 @@
 
 const mongoose = require("mongoose");
 
-const applicationSchema = new mongoose.Schema({
+const gameSchema = new mongoose.Schema({
     title: {
     type: String,
     required: true,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  applications: [applicationSchema],
+  games: [gameSchema],
 });
 
 

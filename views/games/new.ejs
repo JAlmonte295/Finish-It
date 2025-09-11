@@ -1,16 +1,16 @@
-<!-- views/applications/new.ejs -->
+<!-- views/games/new.ejs -->
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add a New App</title>
+    <title>Add a New Game</title>
   </head>
   <body>
     <%- include('../partials/_navbar.ejs') %>
-    <h1>Add a New App</h1>
-    <form action="/users/<%=user.id%>/applications" method="POST">
+    <h1>Add a New Game</h1>
+    <form action="/users/<%=user.id%>/games" method="POST">
       <label for="title">Title:</label>
       <input type="text" name="title" id="title" />
       <label for="platform">Platform:</label>
@@ -24,7 +24,7 @@
       <option value="Completed">Completed</option>
       <option value="Dropped">Dropped</option>
         </select>
-      <button type="submit">Add App</button>
+      <button type="submit">Add Game</button>
     </form>
   </body>
 </html>

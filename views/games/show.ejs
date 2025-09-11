@@ -1,0 +1,21 @@
+<!-- views/games/show.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= game.title %></title>
+  </head>
+  <body>
+    <%- include('../partials/_navbar.ejs') %>
+    <h1><%= game.title %></h1>
+    <p><strong>Platform:</strong> <%= game.platform %></p>
+    <p><strong>Date:</strong> <%= game.date.toDateString() %></p>
+    <p><strong>Status:</strong> <%= game.status %></p>
+    <a href="/users/<%= user.id %>/games">Back to Your Games</a>
+    <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=DELETE" method="POST">
+      <button type="submit">Delete Game</button>
+    </form>
+  </body>
+</html>
