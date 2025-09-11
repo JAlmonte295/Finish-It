@@ -1,13 +1,6 @@
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Game: <%= game.title %></title>
-  </head>
-  <body>
-    <%- include('../partials/_navbar.ejs') %>
+<%- include('../partials/header.ejs', { title: 'Edit Game: ' + game.title }) %>
+
     <h1>Edit Game: <%= game.title %></h1>
     <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=PUT" method="POST">
       <label for="title">Title:</label>
@@ -25,5 +18,5 @@
         </select>
       <button type="submit">Update Game</button>
     </form>
-  </body>
-</html>
+
+<%- include('../partials/footer.ejs') %>

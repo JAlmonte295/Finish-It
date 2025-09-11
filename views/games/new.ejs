@@ -1,14 +1,5 @@
-<!-- views/games/new.ejs -->
+<%- include('../partials/header.ejs', { title: 'Add New Game' }) %>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add a New Game</title>
-  </head>
-  <body>
-    <%- include('../partials/_navbar.ejs') %>
     <h1>Add a New Game</h1>
     <form action="/users/<%=user.id%>/games" method="POST">
       <label for="title">Title:</label>
@@ -26,5 +17,5 @@
         </select>
       <button type="submit">Add Game</button>
     </form>
-  </body>
-</html>
+
+<%- include('../partials/footer.ejs') %>

@@ -1,14 +1,5 @@
-<!-- views/games/index.ejs -->
+<%- include('../partials/header.ejs', { title: 'Your Games' }) %>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Games</title>
-  </head>
-  <body>
-    <%- include('../partials/_navbar.ejs') %>
     <h1>Your Games</h1>
     <a href="/users/<%=user.id%>/games/new">Add a Game</a>
 
@@ -24,5 +15,5 @@
       </li>
       <% }) %>
     </ul>
-  </body>
-</html>
+
+<%- include('../partials/footer.ejs') %>
