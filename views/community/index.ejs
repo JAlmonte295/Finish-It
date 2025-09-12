@@ -1,0 +1,46 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="container mt-4">
+  <h1>Community Backlogs</h1>
+  <p>See what other gamers are planning to play.</p>
+  <hr>
+
+
+
+  <% if (users.length > 0) { %>
+    <% users.forEach(user => { %>
+      <% if (user.games.length > 0) { %>
+        <div class="card mb-3">
+          <div class="card-header">
+            <h4><%= user.username %>'s Backlog</h4>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% user.games.forEach(game => { %>
+              <li class="list-group-item">
+                <strong><%= game.title %></strong>
+                <% if (game.status) { %>
+                  <span class="badge bg-secondary float-end"><%= game.status %></span>
+                <% } %>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+    <% }); %>
+  <% } else { %>
+    <p>No other users in the community yet.</p>
+  <% } %>
+  <hr>
+
+
+    <% if (!user) { %>
+    <div class="alert alert-info" role="alert">
+      <h4 class="alert-heading">Join the Community!</h4>
+      <p>Want to create and share your own game backlog? It's easy! Sign up to start tracking the games you want to finish.</p>
+      <a href="/auth/sign-up" class="btn btn-primary">Sign Up Now</a>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('../partials/footer.ejs') %>

@@ -3,12 +3,14 @@
 <nav>
   <% if(user) { %>
     <a href="/">Home</a>
-  <a href="/users/<%= user.id %>/games">Your Games</a>
-  <a href="/users/<%= user.id %>">Community</a>
+  <a href="/users/<%= user.id %>/games">Your Backlog</a>
+  <a href="/users/<%= user.id %>/games/new">Add Game</a>
+  <a href="/community">Community</a>
   <a href="/auth/sign-out">Sign Out</a>
   <% } else { %>
     <a href="/">Home</a>
-  <a href="/auth/sign-in">Sign In</a>
+  <a href="/community">Community</a>
   <a href="/auth/sign-up">Sign Up</a>
+  <a href="/auth/sign-in">Sign In</a>
   <% } %>
 </nav>

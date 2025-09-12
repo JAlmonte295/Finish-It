@@ -1,23 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const user = require('../models/user.js');
+const User = require('../models/user.js');
 
 router.get('/', async (req, res) => {
     try {
-        const users = await user.find({});
+        const users = await User.find({});
         res.render('users/index.ejs', {users});
     } catch (error) {
         console.log(error);
         res.redirect('/');
     }
 });
-
-router.get('/:userId', async (req,res) => {
+ 
+// This route will handle the user's profile page
+router.get('/:userId/profile', async (req, res) => {
     try {
-        res.redirect(`/users/${req.params.userId}/games`);
+        const user = await User.findById(req.params.userId);
+        res.render('users/profile.ejs', { user });
     } catch (error) {
         console.log(error);
-        res.redirect('/users');
     }
 });
 

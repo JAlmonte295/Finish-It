@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 // Render the sign-up form
 router.get("/sign-up", (req, res) => {
-  res.render("auth/sign-up.ejs", { error: null });
+  res.render("auth/sign-up.ejs", { error: null, title: "Sign Up" });
 });
 
 // Handle sign-up form submission
@@ -13,11 +13,11 @@ router.post("/sign-up", async (req, res) => {
   try {
     const userInDatabase = await User.findOne({ username: req.body.username });
     if (userInDatabase) {
-      return res.render("auth/sign-up.ejs", { error: "Username already taken." });
+      return res.render("auth/sign-up.ejs", { error: "Username already taken.", title: "Sign Up" });
     }
 
     if (req.body.password !== req.body.confirmPassword) {
-      return res.render("auth/sign-up.ejs", { error: "Password and Confirm Password must match." });
+      return res.render("auth/sign-up.ejs", { error: "Password and Confirm Password must match.", title: "Sign Up" });
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -35,17 +35,17 @@ router.post("/sign-up", async (req, res) => {
 
     // Redirect to the home page
     req.session.save(() => {
-      res.redirect("/");
+      res.redirect(`/users/${user.id}/games`);
     });
   } catch (error) {
     console.log(error);
-    res.render("auth/sign-up.ejs", { error: "Something went wrong. Please try again." });
+    res.render("auth/sign-up.ejs", { error: "Something went wrong. Please try again.", title: "Sign Up" });
   }
 });
 
 // Render the sign-in form
 router.get("/sign-in", (req, res) => {
-  res.render("auth/sign-in.ejs", { error: null });
+  res.render("auth/sign-in.ejs", { error: null, title: "Sign In" });
 });
 
 // Handle sign-in form submission
@@ -54,13 +54,13 @@ router.post("/sign-in", async (req, res) => {
     const userInDatabase = await User.findOne({ username: req.body.username });
 
     if (!userInDatabase) {
-      return res.render("auth/sign-in.ejs", { error: "Username not found." });
+      return res.render("auth/sign-in.ejs", { error: "Username not found.", title: "Sign In" });
     }
 
     const isPasswordCorrect = await bcrypt.compare(req.body.password, userInDatabase.password);
 
     if (!isPasswordCorrect) {
-      return res.render("auth/sign-in.ejs", { error: "Incorrect password." });
+      return res.render("auth/sign-in.ejs", { error: "Incorrect password.", title: "Sign In" });
     }
 
     req.session.user = {
@@ -69,11 +69,11 @@ router.post("/sign-in", async (req, res) => {
     };
 
     req.session.save(() => {
-      res.redirect("/");
+      res.redirect(`/users/${userInDatabase.id}/games`);
     });
   } catch (error) {
     console.log(error);
-    res.render("auth/sign-in.ejs", { error: "Something went wrong. Please try again." });
+    res.render("auth/sign-in.ejs", { error: "Something went wrong. Please try again.", title: "Sign In" });
   }
 });
 
