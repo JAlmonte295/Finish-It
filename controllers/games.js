@@ -4,15 +4,44 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 
 const User = require('../models/user.js');
+const axios = require('axios');
+
+// Middleware to check if a user is signed in.
+function isSignedIn(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect('/auth/sign-in');
+  }
+  next();
+}
+
+// Middleware to check if the logged-in user is the owner of the backlog.
+// This will protect the create, update, and delete routes.
+async function checkOwnership(req, res, next) {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            // If user not found, maybe a bad session.
+            return req.session.destroy(() => res.redirect('/'));
+        }
+        // Check if the user making the request is the owner of the page
+        if (!req.session.user || user.id !== req.session.user.id) {
+            return res.redirect(`/users/${req.session.user.id}/games`);
+        }
+        // Attach the user document to the request for the next route handler to use.
+        req.pageOwner = user;
+        next();
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+}
+
+// =============================================
+//                ROUTES
+// =============================================
 
 router.get('/', async (req, res) => {
     try {
-        // A user should only be able to see their own games list.
-        // If the logged-in user's ID from the session doesn't match the
-        // userId in the URL, redirect them to their own games list.
-        if (req.session.user.id !== req.params.userId) {
-            return res.redirect(`/users/${req.session.user.id}/games`);
-        }
         // Find the user from the database
         const user = await User.findById(req.params.userId);
         if (!user) {
@@ -23,9 +52,26 @@ router.get('/', async (req, res) => {
             });
             return;
         }
+
+        // Group games by their status for better organization in the view.
+        const gamesByStatus = {
+            'In Progress': [],
+            'Pending': [],
+            'Completed': [],
+            'Dropped': [],
+        };
+
+        user.games.forEach(game => {
+            // Default status to 'Pending' for any older data that might not have it.
+            const status = game.status || 'Pending';
+            if (gamesByStatus[status]) {
+                gamesByStatus[status].push(game);
+            }
+        });
+
         // Render the index page, passing in the user's games
         res.render('games/index.ejs', {
-            games: user.games,
+            gamesByStatus,
             pageOwner: user,
             title: `${user.username}'s Backlog`,
         });
@@ -35,7 +81,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/new', (req, res) => {
+router.get('/new', isSignedIn, (req, res) => {
     // The pageOwner is the currently signed-in user.
     res.render('games/new.ejs', {
         pageOwner: req.session.user,
@@ -43,22 +89,16 @@ router.get('/new', (req, res) => {
     });
 });
 
-router.post('/', async (req, res) => {
+router.post('/', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        const currentUser = await User.findById(req.params.userId);
-
-        if (!currentUser) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
+        // Validate that a title was provided.
+        if (!req.body.title || !req.body.title.trim()) {
+            return res.render('games/new.ejs', {
+                pageOwner: req.session.user,
+                title: 'Add New Game',
+                error: 'Title is a required field.',
+                game: req.body, // Pass back the submitted data to pre-fill the form
             });
-            return;
-        }
-
-        // Check if the user making the request is the owner of the page
-        if (currentUser.id !== req.session.user.id) {
-            return res.redirect(`/users/${req.session.user.id}/games`);
         }
 
         // If the rating is an empty string, it means "No Rating" was selected.
@@ -67,9 +107,23 @@ router.post('/', async (req, res) => {
             delete req.body.rating;
         }
 
-        currentUser.games.push(req.body);
-        await currentUser.save();
-        res.redirect(`/users/${currentUser.id}/games`);
+        // If a boxArt URL is provided, use it. Otherwise, fetch from RAWG.
+        if (!req.body.boxArt) {
+            try {
+                const response = await axios.get(`https://api.rawg.io/api/games?key=${process.env.RAWG_API_KEY}&search=${encodeURIComponent(req.body.title)}`);
+                if (response.data.results.length > 0) {
+                    // Use the background image from the first result
+                    req.body.boxArt = response.data.results[0].background_image;
+                }
+            } catch (apiError) {
+                // If the API call fails, we can just proceed without box art.
+                console.log('RAWG API call failed:', apiError.message);
+            }
+        }
+
+        req.pageOwner.games.push(req.body);
+        await req.pageOwner.save();
+        res.redirect(`/users/${req.pageOwner.id}/games`);
     } catch (error) {
         console.log(error);
         res.redirect('/');
@@ -103,61 +157,29 @@ router.get('/:gameId', async (req, res) => {
     }
 });
 
-router.delete('/:gameId', async (req, res) => {
+router.delete('/:gameId', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        const currentUser = await User.findById(req.params.userId);
-
-        if (!currentUser) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-
-        // Check if the user making the request is the owner of the page
-        if (currentUser.id !== req.session.user.id) {
-            return res.redirect(`/users/${req.session.user.id}/games`);
-        }
-
         // Use the .pull() method to remove the game from the subdocument array
         // .pull() finds and removes all matching documents.
-        currentUser.games.pull({ _id: req.params.gameId });
-        await currentUser.save();
-        res.redirect(`/users/${currentUser.id}/games`);
+        req.pageOwner.games.pull({ _id: req.params.gameId });
+        await req.pageOwner.save();
+        res.redirect(`/users/${req.pageOwner.id}/games`);
         } catch (error) {
         console.log(error);
         res.redirect('/');
     }
 });
 
-router.get('/:gameId/edit', async (req, res) => {
+router.get('/:gameId/edit', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
-
-        if (!user) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-
-        // Check if the user making the request is the owner of the page
-        if (user.id !== req.session.user.id) {
-            return res.redirect(`/users/${req.session.user.id}/games`);
-        }
-
-        const game = user.games.id(req.params.gameId);
+        const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
             // If the game is not found, redirect to that user's game list
-            return res.redirect(`/users/${user.id}/games`);
+            return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
         res.render('games/edit.ejs', {
             game,
-            pageOwner: user,
+            pageOwner: req.pageOwner,
             title: `Edit ${game.title}`,
         });
     } catch (error) {
@@ -166,28 +188,12 @@ router.get('/:gameId/edit', async (req, res) => {
     }
 });
 
-router.put('/:gameId', async (req, res) => {
+router.put('/:gameId', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        const currentUser = await User.findById(req.params.userId);
-
-        if (!currentUser) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-
-        // Check if the user making the request is the owner of the page
-        if (currentUser.id !== req.session.user.id) {
-            return res.redirect(`/users/${req.session.user.id}/games`);
-        }
-
-        const game = currentUser.games.id(req.params.gameId);
+        const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
             // If the game is not found, redirect to that user's game list
-            return res.redirect(`/users/${currentUser.id}/games`);
+            return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
 
         // If the rating is an empty string, it means "No Rating" was selected.
@@ -197,8 +203,8 @@ router.put('/:gameId', async (req, res) => {
         }
 
         game.set(req.body);
-        await currentUser.save();
-        res.redirect(`/users/${currentUser.id}/games/${req.params.gameId}`);
+        await req.pageOwner.save();
+        res.redirect(`/users/${req.pageOwner.id}/games/${req.params.gameId}`);
     } catch (error) {
         console.log(error);
         res.redirect('/');

@@ -9,21 +9,13 @@
 
   <% if (users.length > 0) { %>
     <% users.forEach(user => { %>
-      <% if (user.games.length > 0) { %>
-        <div class="card mb-3">
-          <div class="card-header">
-            <h4><%= user.username %>'s Backlog</h4>
+      <% if (user.games.length > 0 && (!locals.user || locals.user.id != user.id)) { %>
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title"><%= user.username %></h5>
+            <p class="card-text"><%= user.games.length %> game(s) in backlog.</p>
+            <a href="/users/<%= user.id %>/games" class="btn btn-outline-primary">View Backlog</a>
           </div>
-          <ul class="list-group list-group-flush">
-            <% user.games.forEach(game => { %>
-              <li class="list-group-item">
-                <strong><%= game.title %></strong>
-                <% if (game.status) { %>
-                  <span class="badge bg-secondary float-end"><%= game.status %></span>
-                <% } %>
-              </li>
-            <% }); %>
-          </ul>
         </div>
       <% } %>
     <% }); %>

@@ -27,10 +27,13 @@
         <div class="card shadow-sm">
           <div class="card-body p-4">
             <h5 class="card-title text-center mb-3">Sign In</h5>
+            <% if (locals.error) { %>
+              <div class="alert alert-danger py-2"><%= error %></div>
+            <% } %>
             <form action="/auth/sign-in" method="POST">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" value="<%= locals.formInput ? formInput.username : '' %>" required>
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

@@ -48,6 +48,19 @@ app.use(
   })
 );
 app.use(passUserToView);
+// Middleware to handle flash messages
+app.use((req, res, next) => {
+  // if there's a flash message in the session, make it available in the views
+  if (req.session.error) {
+    res.locals.error = req.session.error;
+    delete req.session.error;
+  }
+  if (req.session.formInput) {
+    res.locals.formInput = req.session.formInput;
+    delete req.session.formInput;
+  }
+  next();
+});
 
 // Routes
 app.get("/", (req, res) => {
@@ -69,12 +82,13 @@ app.get("/community", async (req, res) => {
   }
 });
 
+app.use('/users/:userId/games', gamesController);
+
 app.use("/auth", authController);
 // The isSignedIn middleware will protect all routes below it
 app.use(isSignedIn);
 
 // Routers
-app.use('/users/:userId/games', gamesController);
 app.use('/users', userController);
 
 // Server Listening

@@ -1,17 +1,44 @@
-<%- include('../partials/header.ejs', { title: game.title }) %>
+<%- include('../partials/header.ejs') %>
 
-
-    <h1><%= game.title %></h1>
-    <p><strong>Platform:</strong> <%= game.platform %></p>
-    <p><strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toDateString() : 'N/A' %></p>
-    <p><strong>Status:</strong> <%= game.status %></p>
-    <% if (game.rating) { %>
-      <p><strong>Rating:</strong> <%= '★'.repeat(game.rating) %></p>
-    <% } %>
-    <a href="/users/<%= user.id %>/games/<%= game.id %>/edit">Edit Game</a> |
-    <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=DELETE" method="POST">
-      <button type="submit">Delete Game</button>
-    </form>
-        <a href="/users/<%= user.id %>/games">Back to Your Games</a>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <% if (game.boxArt) { %>
+        <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" class="img-fluid rounded shadow-sm mb-3">
+      <% } else { %>
+        <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="d-block text-decoration-none">
+          <div class="d-flex flex-column align-items-center justify-content-center bg-light text-secondary p-4 rounded" style="border: 2px dashed #ccc; min-height: 200px;">
+            <h5 class="mb-1">No Image</h5>
+            <p class="mb-0">Click to add an image</p>
+          </div>
+        </a>
+      <% } %>
+    </div>
+    <div class="col-md-8">
+      <h1><%= game.title %></h1>
+      <p class="lead text-muted"><%= game.platform %></p>
+      <hr>
+      <% if (game.notes) { %>
+        <p><strong>Notes:</strong></p>
+        <p><%= game.notes.replace(/\n/g, '<br>') %></p>
+        <hr>
+      <% } %>
+      <p><strong>Status:</strong> <span class="badge bg-info text-dark"><%= game.status %></span></p>
+      <% if (game.rating) { %>
+        <p><strong>Rating:</strong> <span style="color: #ffc107;"><%= '★'.repeat(game.rating) %></span><span style="color: #e9ecef;"><%= '★'.repeat(5 - game.rating) %></span></p>
+      <% } %>
+      <p><strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toLocaleDateString() : 'N/A' %></p>
+      <div class="mt-4">
+        <% if (user && user.id == pageOwner.id) { %>
+          <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="btn btn-secondary">Edit Game</a>
+          <form action="/users/<%= pageOwner.id %>/games/<%= game.id %>?_method=DELETE" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-danger">Delete Game</button>
+          </form>
+        <% } %>
+        <a href="/users/<%= pageOwner.id %>/games" class="btn btn-outline-secondary">Back to Backlog</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%- include('../partials/footer.ejs') %>

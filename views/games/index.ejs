@@ -1,22 +1,51 @@
-<%- include('../partials/header.ejs', { title: 'Your Games' }) %>
+<%- include('../partials/header.ejs') %>
 
-    <h1>Your Backlog</h1>
-    <a href="/users/<%=user.id%>/games/new">Add a Game</a>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= pageOwner.username %>'s Backlog</h1>
+    <% if (user && user.id == pageOwner.id) { %>
+      <a href="/users/<%= pageOwner.id %>/games/new" class="btn btn-primary">Add a Game</a>
+    <% } %>
+  </div>
 
-    <ul>
-      <% games.forEach(game => { %>
-      <li>
-        <a href="/users/<%=user.id%>/games/<%=game.id%>">View Details</a> |
-        
-        <strong>Title:</strong> <%= game.title %> |
-        <strong>Platform:</strong> <%= game.platform %> |
-        <strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toDateString() : 'N/A' %> |
-        <strong>Status:</strong> <%= game.status %> |
-        <% if (game.rating) { %>
-          <strong>Rating:</strong> <%= '★'.repeat(game.rating) %>
-        <% } %>
-      </li>
-      <% }) %>
-    </ul>
+  <% const statusOrder = ['In Progress', 'Pending', 'Completed', 'Dropped']; %>
+  <% let totalGames = 0; %>
+
+  <% statusOrder.forEach(status => { %>
+    <% const games = gamesByStatus[status]; %>
+    <% totalGames += games.length; %>
+    <% if (games && games.length > 0) { %>
+      <h2 class="mt-4"><%= status %> <span class="badge bg-primary"><%= games.length %></span></h2>
+      <hr>
+      <div class="list-group">
+        <% games.forEach(game => { %>
+          <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 align-items-center">
+              <% if (game.boxArt) { %>
+                <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" style="width: 120px; height: 90px; object-fit: cover; margin-right: 20px; border-radius: .25rem;">
+              <% } else { %>
+                <div class="d-flex flex-column align-items-center justify-content-center bg-light text-secondary" style="width: 120px; height: 90px; margin-right: 20px; text-align: center; font-size: 0.8rem; border: 1px dashed #ccc; border-radius: .25rem;" role="img" aria-label="No image available for <%= game.title %>">
+                  <span>No Image</span>
+                </div>
+              <% } %>
+              <div class="flex-grow-1">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-0"><%= game.title %></h5>
+                  <% if (game.rating) { %>
+                    <small class="text-muted"><%= '★'.repeat(game.rating) %></small>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+  <% }); %>
+
+  <% if (totalGames === 0) { %>
+    <div class="alert alert-info mt-4">Your backlog is empty. <a href="/users/<%= pageOwner.id %>/games/new">Add your first game!</a></div>
+  <% } %>
+</div>
 
 <%- include('../partials/footer.ejs') %>

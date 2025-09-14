@@ -24,6 +24,12 @@ const gameSchema = new mongoose.Schema({
     min: 1,
     max: 5,
   },
+  boxArt: {
+    type: String,
+  },
+  notes: {
+    type: String,
+  },
 });
 
 const userSchema = new mongoose.Schema({

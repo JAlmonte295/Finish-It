@@ -1,31 +1,57 @@
+<%- include('../partials/header.ejs') %>
 
-<%- include('../partials/header.ejs', { title: 'Edit Game: ' + game.title }) %>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1>Edit Game: <%= game.title %></h1>
+      <hr>
 
-    <h1>Edit Game: <%= game.title %></h1>
-    <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=PUT" method="POST">
-      <label for="title">Title:</label>
-      <input type="text" name="title" id="title" value="<%= game.title %>" />
-      <label for="platform">Platform:</label>
-      <input type="text" name="platform" id="platform" value="<%= game.platform %>" />
-      <label for="dateAdded">Date Added:</label>
-      <input type="date" name="dateAdded" id="dateAdded"  value="<%= game.dateAdded ? game.dateAdded.toISOString().split('T')[0] : '' %>" />
-      <label for="status">Status:</label>
-        <select name="status" id="status">
-      <option value="Pending" <%= game.status === 'Pending' ? 'selected' : '' %> >Pending</option>
-      <option value="In Progress" <%= game.status === 'In Progress' ? 'selected' : '' %> >In Progress</option>
-      <option value="Completed" <%= game.status === 'Completed' ? 'selected' : '' %> >Completed</option>
-      <option value="Dropped" <%= game.status === 'Dropped' ? 'selected' : '' %> >Dropped</option>
-        </select>
-      <label for="rating">Rating:</label>
-      <select name="rating" id="rating">
-        <option value="" <%= !game.rating ? 'selected' : '' %>>No Rating</option>
-        <option value="1" <%= game.rating == 1 ? 'selected' : '' %>>1 Star</option>
-        <option value="2" <%= game.rating == 2 ? 'selected' : '' %>>2 Stars</option>
-        <option value="3" <%= game.rating == 3 ? 'selected' : '' %>>3 Stars</option>
-        <option value="4" <%= game.rating == 4 ? 'selected' : '' %>>4 Stars</option>
-        <option value="5" <%= game.rating == 5 ? 'selected' : '' %>>5 Stars</option>
-      </select>
-      <button type="submit">Update Game</button>
-    </form>
+      <form action="/users/<%= pageOwner.id %>/games/<%= game.id %>?_method=PUT" method="POST">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" class="form-control" name="title" id="title" value="<%= game.title %>" required>
+        </div>
+        <div class="mb-3">
+          <label for="platform" class="form-label">Platform</label>
+          <input type="text" class="form-control" name="platform" id="platform" value="<%= game.platform %>">
+        </div>
+        <div class="mb-3">
+          <label for="notes" class="form-label">Notes (Optional)</label>
+          <textarea class="form-control" name="notes" id="notes" rows="3"><%= game.notes || '' %></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="dateAdded" class="form-label">Date Added</label>
+          <input type="date" class="form-control" name="dateAdded" id="dateAdded" value="<%= game.dateAdded ? game.dateAdded.toISOString().split('T')[0] : '' %>">
+        </div>
+        <div class="mb-3">
+          <label for="boxArt" class="form-label">Box Art URL (Optional)</label>
+          <input type="text" class="form-control" name="boxArt" id="boxArt" value="<%= game.boxArt || '' %>">
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select">
+              <option value="Pending" <%= game.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              <option value="In Progress" <%= game.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+              <option value="Completed" <%= game.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+              <option value="Dropped" <%= game.status === 'Dropped' ? 'selected' : '' %>>Dropped</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="rating" class="form-label">Rating</label>
+            <select name="rating" id="rating" class="form-select">
+              <option value="" <%= !game.rating ? 'selected' : '' %>>No Rating</option>
+              <% for(let i = 1; i <= 5; i++) { %>
+                <option value="<%= i %>" <%= game.rating == i ? 'selected' : '' %>><%= i %> Star<%= i > 1 ? 's' : '' %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Game</button>
+        <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
 
 <%- include('../partials/footer.ejs') %>

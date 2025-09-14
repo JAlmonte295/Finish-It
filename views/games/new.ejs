@@ -1,30 +1,61 @@
-<%- include('../partials/header.ejs', { title: 'Add New Game' }) %>
+<%- include('../partials/header.ejs') %>
 
-    <h1>Add a New Game</h1>
-    <form action="/users/<%=user.id%>/games" method="POST">
-      <label for="title">Title:</label>
-      <input type="text" name="title" id="title" />
-      <label for="platform">Platform:</label>
-      <input type="text" name="platform" id="platform" />
-      <label for="dateAdded">Date Added:</label>
-      <input type="date" name="dateAdded" id="dateAdded" />
-      <label for="status">Status:</label>
-        <select name="status" id="status">
-      <option value="Pending">Pending</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Completed">Completed</option>
-      <option value="Dropped">Dropped</option>
-        </select>
-      <label for="rating">Rating:</label>
-      <select name="rating" id="rating">
-        <option value="" selected>No Rating</option>
-        <option value="1">1 Star</option>
-        <option value="2">2 Stars</option>
-        <option value="3">3 Stars</option>
-        <option value="4">4 Stars</option>
-        <option value="5">5 Stars</option>
-      </select>
-      <button type="submit">Add Game</button>
-    </form>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1>Add a New Game</h1>
+      <hr>
+
+      <% if (locals.error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+
+      <form action="/users/<%= pageOwner.id %>/games" method="POST">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" class="form-control" name="title" id="title" value="<%= locals.game ? game.title : '' %>" required>
+        </div>
+        <div class="mb-3">
+          <label for="platform" class="form-label">Platform</label>
+          <input type="text" class="form-control" name="platform" id="platform" value="<%= locals.game ? game.platform : '' %>">
+        </div>
+        <div class="mb-3">
+          <label for="notes" class="form-label">Notes (Optional)</label>
+          <textarea class="form-control" name="notes" id="notes" rows="3"><%= locals.game ? game.notes : '' %></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="dateAdded" class="form-label">Date Added</label>
+          <input type="date" class="form-control" name="dateAdded" id="dateAdded" value="<%= locals.game ? game.dateAdded : '' %>">
+        </div>
+        <div class="mb-3">
+          <label for="boxArt" class="form-label">Box Art URL (Optional)</label>
+          <input type="text" class="form-control" name="boxArt" id="boxArt" placeholder="http://example.com/image.jpg" value="<%= locals.game ? game.boxArt : '' %>">
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select">
+              <option value="Pending" <%= locals.game && game.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              <option value="In Progress" <%= locals.game && game.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+              <option value="Completed" <%= locals.game && game.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+              <option value="Dropped" <%= locals.game && game.status === 'Dropped' ? 'selected' : '' %>>Dropped</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="rating" class="form-label">Rating</label>
+            <select name="rating" id="rating" class="form-select">
+              <option value="" <%= !locals.game || !game.rating ? 'selected' : '' %>>No Rating</option>
+              <% for(let i = 1; i <= 5; i++) { %>
+                <option value="<%= i %>" <%= locals.game && game.rating == i ? 'selected' : '' %>><%= i %> Star<%= i > 1 ? 's' : '' %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Game</button>
+        <a href="/users/<%= pageOwner.id %>/games" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
 
 <%- include('../partials/footer.ejs') %>
