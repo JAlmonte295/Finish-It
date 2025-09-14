@@ -1,0 +1,230 @@
+/* Custom App-like Dark Theme */
+
+:root {
+  --dark-blue-bg: #0d1b2a;
+  --medium-blue-bg: #1b263b;
+  --light-blue-bg: #415a77;
+  --accent-color: #48AAAD; /* A nice teal blue */
+  --text-color: #e0e1dd;
+}
+
+/* Override Bootstrap dark theme variables */
+[data-bs-theme="dark"] {
+  --bs-body-bg: var(--dark-blue-bg);
+  --bs-body-color: var(--text-color);
+  --bs-emphasis-color: #fff;
+  --bs-secondary-bg: var(--medium-blue-bg);
+  --bs-tertiary-bg: var(--medium-blue-bg);
+  --bs-primary: var(--accent-color);
+  --bs-primary-rgb: 72, 170, 173;
+  --bs-border-color: #304158;
+  --bs-link-color: #9cb3d0;
+  --bs-link-hover-color: #ffffff;
+}
+
+body {
+  /* Add a background image with a dark overlay to maintain the theme */
+  background: linear-gradient(rgba(13, 27, 42, 0.92), rgba(13, 27, 42, 0.92)), url("/images/background.png");
+  background: linear-gradient(rgba(13, 27, 42, 0.88), rgba(13, 27, 42, 0.88)), url("/images/background.png");
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  color: var(--text-color);
+  /* Ensure the body always takes at least the full viewport height */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Component Overrides */
+.navbar {
+  background-color: var(--medium-blue-bg) !important;
+  border-bottom: 1px solid var(--bs-border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar .navbar-brand {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.navbar-brand img {
+  height: 75px;
+  margin-right: 0;
+}
+
+.navbar .nav-link {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  padding: 0 0.75rem;
+}
+
+.navbar .nav-link:hover, .navbar .nav-link.active {
+  color: var(--text-color);
+}
+
+.navbar .navbar-text {
+  font-size: 1.2rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--accent-color);
+  --bs-btn-border-color: var(--accent-color);
+  --bs-btn-hover-bg: #3a8c8f; /* A slightly darker teal */
+  --bs-btn-hover-border-color: #3a8c8f;
+  --bs-btn-active-bg: #3a8c8f;
+  --bs-btn-active-border-color: #3a8c8f;
+  --bs-btn-focus-shadow-rgb: 72, 170, 173, .5;
+  /* Text color for the button */
+  --bs-btn-color: var(--dark-blue-bg);
+  --bs-btn-hover-color: var(--dark-blue-bg);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--accent-color);
+  --bs-btn-border-color: var(--accent-color);
+  --bs-btn-hover-bg: var(--accent-color);
+  --bs-btn-hover-border-color: var(--accent-color);
+  --bs-btn-hover-color: var(--dark-blue-bg);
+}
+
+.welcome-jumbotron {
+  background-color: rgba(27, 38, 59, 0.7); /* semi-transparent medium blue */
+  border: 1px solid var(--bs-border-color);
+}
+
+.card {
+  background-color: var(--medium-blue-bg);
+  border-color: var(--bs-border-color);
+}
+
+.form-control,
+.form-select {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--text-color);
+  border-color: var(--bs-border-color);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--text-color);
+  border-color: var(--accent-color);
+}
+
+.list-group-item {
+  background-color: var(--medium-blue-bg);
+  border-color: var(--bs-border-color);
+}
+
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+  background-color: var(--light-blue-bg);
+}
+
+/* Custom Utility Classes */
+.game-list-art {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: .25rem;
+}
+
+.game-list-art-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dark-blue-bg);
+  color: var(--accent-color);
+  width: 120px;
+  height: 90px;
+  margin-right: 20px;
+  text-align: center;
+  font-size: 0.8rem;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: .25rem;
+}
+
+.game-show-art-placeholder {
+  border: 2px dashed var(--bs-border-color);
+  min-height: 200px;
+}
+
+.rating-star-filled {
+  color: #ffc107;
+}
+
+.rating-star-empty {
+  color: #343a40;
+}
+
+.site-footer {
+  background-color: var(--medium-blue-bg);
+  color: var(--accent-color);
+  padding: 20px 0;
+  /* Pushes footer to the bottom */
+  margin-top: auto;
+  border-top: 1px solid var(--bs-border-color);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Game Portrait View Styles */
+.game-portrait-card {
+  position: relative;
+  display: block;
+  border-radius: .375rem;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.game-portrait-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+.game-portrait-img {
+  width: 100%;
+  aspect-ratio: 2 / 3; /* Portrait aspect ratio */
+  object-fit: cover;
+  display: block;
+}
+
+.game-portrait-img-placeholder {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--bs-tertiary-bg);
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.game-portrait-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(13, 27, 42, 0.95), transparent);
+  padding: 1.5rem 0.75rem 0.75rem;
+}
+
+.game-portrait-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  /* Allow title to wrap to the next line */
+  white-space: normal;
+  margin-bottom: 0.25rem;
+}
+
+.game-portrait-rating {
+  font-size: 0.8rem;
+}

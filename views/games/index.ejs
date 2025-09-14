@@ -17,27 +17,27 @@
     <% if (games && games.length > 0) { %>
       <h2 class="mt-4"><%= status %> <span class="badge bg-primary"><%= games.length %></span></h2>
       <hr>
-      <div class="list-group">
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-4">
         <% games.forEach(game => { %>
-          <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 align-items-center">
+          <div class="col">
+            <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>" class="game-portrait-card">
               <% if (game.boxArt) { %>
-                <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" style="width: 120px; height: 90px; object-fit: cover; margin-right: 20px; border-radius: .25rem;">
+                <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" class="game-portrait-img">
               <% } else { %>
-                <div class="d-flex flex-column align-items-center justify-content-center bg-light text-secondary" style="width: 120px; height: 90px; margin-right: 20px; text-align: center; font-size: 0.8rem; border: 1px dashed #ccc; border-radius: .25rem;" role="img" aria-label="No image available for <%= game.title %>">
-                  <span>No Image</span>
+                <div class="game-portrait-img-placeholder">
+                  <span><%= game.title %></span>
                 </div>
               <% } %>
-              <div class="flex-grow-1">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-0"><%= game.title %></h5>
-                  <% if (game.rating) { %>
-                    <small class="text-muted"><%= '★'.repeat(game.rating) %></small>
-                  <% } %>
+              <div class="game-portrait-overlay">
+                <h6 class="game-portrait-title" title="<%= game.title %>"><%= game.title %></h6>
+                <% if (game.rating) { %>
+                  <div class="game-portrait-rating">
+                    <span class="rating-star-filled"><%= '★'.repeat(game.rating) %></span><span class="rating-star-empty"><%= '★'.repeat(5 - game.rating) %></span>
+                  </div>
+                <% } %>
                 </div>
-              </div>
-            </div>
-          </a>
+            </a>
+          </div>
         <% }); %>
       </div>
     <% } %>

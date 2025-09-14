@@ -30,6 +30,7 @@ mongoose.connection.on("connected", () => {
 });
 
 // Middleware
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 app.use(morgan('dev'));
@@ -71,9 +72,23 @@ app.get("/", (req, res) => {
 
 app.get("/community", async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find({}).lean();
+
+    // For each user, find their most recently added game.
+    const usersWithActivity = users.map(user => {
+      let latestGame = null;
+
+      if (user.games && user.games.length > 0) {
+        // Sort by dateAdded descending to find the most recent one.
+        user.games.sort((a, b) => b.dateAdded - a.dateAdded);
+        latestGame = user.games[0];
+      }
+
+      return { ...user, latestGame };
+    });
+
     res.render("community/index.ejs", {
-      users,
+      users: usersWithActivity,
       title: "Community",
     });
   } catch (error) {
