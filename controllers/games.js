@@ -61,6 +61,12 @@ router.post('/', async (req, res) => {
             return res.redirect(`/users/${req.session.user.id}/games`);
         }
 
+        // If the rating is an empty string, it means "No Rating" was selected.
+        // We should remove it from the request body so Mongoose doesn't try to save it.
+        if (req.body.rating === '') {
+            delete req.body.rating;
+        }
+
         currentUser.games.push(req.body);
         await currentUser.save();
         res.redirect(`/users/${currentUser.id}/games`);
@@ -183,6 +189,13 @@ router.put('/:gameId', async (req, res) => {
             // If the game is not found, redirect to that user's game list
             return res.redirect(`/users/${currentUser.id}/games`);
         }
+
+        // If the rating is an empty string, it means "No Rating" was selected.
+        // We need to explicitly unset it in the document.
+        if (req.body.rating === '') {
+            req.body.rating = undefined;
+        }
+
         game.set(req.body);
         await currentUser.save();
         res.redirect(`/users/${currentUser.id}/games/${req.params.gameId}`);

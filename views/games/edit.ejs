@@ -7,8 +7,8 @@
       <input type="text" name="title" id="title" value="<%= game.title %>" />
       <label for="platform">Platform:</label>
       <input type="text" name="platform" id="platform" value="<%= game.platform %>" />
-      <label for="date">Date:</label>
-      <input type="date" name="date" id="date"  value="<%= game.date.toISOString().split('T')[0] %>" />
+      <label for="dateAdded">Date Added:</label>
+      <input type="date" name="dateAdded" id="dateAdded"  value="<%= game.dateAdded ? game.dateAdded.toISOString().split('T')[0] : '' %>" />
       <label for="status">Status:</label>
         <select name="status" id="status">
       <option value="Pending" <%= game.status === 'Pending' ? 'selected' : '' %> >Pending</option>
@@ -16,6 +16,15 @@
       <option value="Completed" <%= game.status === 'Completed' ? 'selected' : '' %> >Completed</option>
       <option value="Dropped" <%= game.status === 'Dropped' ? 'selected' : '' %> >Dropped</option>
         </select>
+      <label for="rating">Rating:</label>
+      <select name="rating" id="rating">
+        <option value="" <%= !game.rating ? 'selected' : '' %>>No Rating</option>
+        <option value="1" <%= game.rating == 1 ? 'selected' : '' %>>1 Star</option>
+        <option value="2" <%= game.rating == 2 ? 'selected' : '' %>>2 Stars</option>
+        <option value="3" <%= game.rating == 3 ? 'selected' : '' %>>3 Stars</option>
+        <option value="4" <%= game.rating == 4 ? 'selected' : '' %>>4 Stars</option>
+        <option value="5" <%= game.rating == 5 ? 'selected' : '' %>>5 Stars</option>
+      </select>
       <button type="submit">Update Game</button>
     </form>
 

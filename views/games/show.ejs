@@ -3,8 +3,11 @@
 
     <h1><%= game.title %></h1>
     <p><strong>Platform:</strong> <%= game.platform %></p>
-    <p><strong>Date:</strong> <%= game.date.toDateString() %></p>
+    <p><strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toDateString() : 'N/A' %></p>
     <p><strong>Status:</strong> <%= game.status %></p>
+    <% if (game.rating) { %>
+      <p><strong>Rating:</strong> <%= '★'.repeat(game.rating) %></p>
+    <% } %>
     <a href="/users/<%= user.id %>/games/<%= game.id %>/edit">Edit Game</a> |
     <form action="/users/<%= user.id %>/games/<%= game.id %>?_method=DELETE" method="POST">
       <button type="submit">Delete Game</button>

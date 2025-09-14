@@ -1,15 +1,51 @@
-<!-- views/index.ejs -->
+<%- include('./partials/header.ejs') %>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finish-It</title>
-  </head>
-  <body>
-    <%- include('./partials/_navbar.ejs') %>
-    <h1>Finish-It</h1>
-    <p>A game backlog tracker.</p>
-  </body>
-</html>
+<div class="container mt-4">
+  <% if (user) { %>
+    <div class="p-5 mb-4 bg-light rounded-3">
+      <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Welcome back, <%= user.username %>!</h1>
+        <p class="col-md-8 fs-4">Ready to tackle your backlog? See what you've got planned or add something new.</p>
+        <a href="/users/<%= user.id %>/games" class="btn btn-primary btn-lg" type="button">Go to Your Backlog</a>
+      </div>
+    </div>
+  <% } else { %>
+    <div class="row align-items-center">
+      <div class="col-md-7">
+        <h1>Welcome to Finish It!</h1>
+        <p class="lead">The best place to track your video game backlog and conquer your collection.</p>
+        <p>Tired of losing track of your ever-growing game library? "Finish It!" helps you organize your games, track your progress, and decide what to play next. Join our community of gamers and start finishing it!</p>
+        <hr class="my-4">
+        <h4>Key Features:</h4>
+        <ul>
+          <li>Create a personalized list of games you own.</li>
+          <li>Update the status of each game (e.g., Pending, In Progress, Completed).</li>
+          <li>See what others in the community are playing.</li>
+        </ul>
+      </div>
+      <div class="col-md-5">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h5 class="card-title text-center mb-3">Sign In</h5>
+            <form action="/auth/sign-in" method="POST">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+              <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Sign In</button>
+                <a href="/auth/sign-up" class="btn btn-outline-secondary">Create an Account</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<%- include('./partials/footer.ejs') %>

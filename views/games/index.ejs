@@ -10,8 +10,11 @@
         
         <strong>Title:</strong> <%= game.title %> |
         <strong>Platform:</strong> <%= game.platform %> |
-        <strong>Date:</strong> <%= game.date.toDateString() %> |
-        <strong>Status:</strong> <%= game.status %>
+        <strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toDateString() : 'N/A' %> |
+        <strong>Status:</strong> <%= game.status %> |
+        <% if (game.rating) { %>
+          <strong>Rating:</strong> <%= '★'.repeat(game.rating) %>
+        <% } %>
       </li>
       <% }) %>
     </ul>

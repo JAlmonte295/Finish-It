@@ -6,8 +6,8 @@
       <input type="text" name="title" id="title" />
       <label for="platform">Platform:</label>
       <input type="text" name="platform" id="platform" />
-      <label for="date">Date:</label>
-      <input type="date" name="date" id="date" />
+      <label for="dateAdded">Date Added:</label>
+      <input type="date" name="dateAdded" id="dateAdded" />
       <label for="status">Status:</label>
         <select name="status" id="status">
       <option value="Pending">Pending</option>
@@ -15,6 +15,15 @@
       <option value="Completed">Completed</option>
       <option value="Dropped">Dropped</option>
         </select>
+      <label for="rating">Rating:</label>
+      <select name="rating" id="rating">
+        <option value="" selected>No Rating</option>
+        <option value="1">1 Star</option>
+        <option value="2">2 Stars</option>
+        <option value="3">3 Stars</option>
+        <option value="4">4 Stars</option>
+        <option value="5">5 Stars</option>
+      </select>
       <button type="submit">Add Game</button>
     </form>
 

@@ -11,14 +11,19 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  date: {
+  dateAdded: {
     type: Date,
     required: true,
   },
   status: {
     type: String,
     enum: ['Pending', 'In Progress', 'Completed', 'Dropped'],
-  }
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
 });
 
 const userSchema = new mongoose.Schema({
