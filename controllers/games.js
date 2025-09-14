@@ -36,23 +36,27 @@ async function checkOwnership(req, res, next) {
     }
 }
 
+// Middleware to find the user whose backlog is being viewed.
+async function findPageOwner(req, res, next) {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.redirect('/');
+        }
+        req.pageOwner = user;
+        next();
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+}
+
 // =============================================
 //                ROUTES
 // =============================================
 
-router.get('/', async (req, res) => {
+router.get('/', findPageOwner, async (req, res) => {
     try {
-        // Find the user from the database
-        const user = await User.findById(req.params.userId);
-        if (!user) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-
         // Group games by their status for better organization in the view.
         const gamesByStatus = {
             'In Progress': [],
@@ -61,7 +65,7 @@ router.get('/', async (req, res) => {
             'Dropped': [],
         };
 
-        user.games.forEach(game => {
+        req.pageOwner.games.forEach(game => {
             // Default status to 'Pending' for any older data that might not have it.
             const status = game.status || 'Pending';
             if (gamesByStatus[status]) {
@@ -72,8 +76,8 @@ router.get('/', async (req, res) => {
         // Render the index page, passing in the user's games
         res.render('games/index.ejs', {
             gamesByStatus,
-            pageOwner: user,
-            title: `${user.username}'s Backlog`,
+            pageOwner: req.pageOwner,
+            title: `${req.pageOwner.username}'s Backlog`,
         });
     } catch (error) {
         console.log(error);
@@ -99,6 +103,11 @@ router.post('/', isSignedIn, checkOwnership, async (req, res) => {
                 error: 'Title is a required field.',
                 game: req.body, // Pass back the submitted data to pre-fill the form
             });
+        }
+
+        // If a date isn't provided, default to the current date.
+        if (!req.body.dateAdded) {
+            req.body.dateAdded = new Date();
         }
 
         // If the rating is an empty string, it means "No Rating" was selected.
@@ -130,25 +139,16 @@ router.post('/', isSignedIn, checkOwnership, async (req, res) => {
     }
 });
 
-router.get('/:gameId', async (req, res) => {
+router.get('/:gameId', findPageOwner, async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
-        if (!user) {
-            // If the user is not found, it might be a bad session.
-            // Redirect to the home page and destroy the session.
-            req.session.destroy(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-        const game = user.games.id(req.params.gameId);
+        const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
             // If the game is not found, redirect to that user's game list
-            return res.redirect(`/users/${user.id}/games`);
+            return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
         res.render('games/show.ejs', {
             game,
-            pageOwner: user,
+            pageOwner: req.pageOwner,
             title: game.title,
         });
     } catch (error) {

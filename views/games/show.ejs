@@ -7,7 +7,7 @@
         <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" class="img-fluid rounded shadow-sm mb-3">
       <% } else { %>
         <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="d-block text-decoration-none">
-          <div class="d-flex flex-column align-items-center justify-content-center bg-light text-secondary p-4 rounded game-show-art-placeholder">
+          <div class="d-flex flex-column align-items-center justify-content-center p-4 rounded game-show-art-placeholder">
             <h5 class="mb-1">No Image</h5>
             <p class="mb-0">Click to add an image</p>
           </div>
@@ -23,7 +23,7 @@
         <p><%= game.notes.replace(/\n/g, '<br>') %></p>
         <hr>
       <% } %>
-      <p><strong>Status:</strong> <span class="badge bg-info text-dark"><%= game.status %></span></p>
+      <p><strong>Status:</strong> <span class="badge status-badge"><%= game.status %></span></p>
       <% if (game.rating) { %>
         <p><strong>Rating:</strong> <span class="rating-star-filled"><%= '★'.repeat(game.rating) %></span><span class="rating-star-empty"><%= '★'.repeat(5 - game.rating) %></span></p>
       <% } %>

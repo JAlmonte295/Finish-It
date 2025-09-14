@@ -24,7 +24,6 @@
 
 body {
   /* Add a background image with a dark overlay to maintain the theme */
-  background: linear-gradient(rgba(13, 27, 42, 0.92), rgba(13, 27, 42, 0.92)), url("/images/background.png");
   background: linear-gradient(rgba(13, 27, 42, 0.88), rgba(13, 27, 42, 0.88)), url("/images/background.png");
   background-size: cover;
   background-position: center center;
@@ -49,7 +48,7 @@ body {
 }
 
 .navbar-brand img {
-  height: 75px;
+  height: 50px;
   margin-right: 0;
 }
 
@@ -88,6 +87,16 @@ body {
   --bs-btn-hover-color: var(--dark-blue-bg);
 }
 
+.btn-secondary {
+  --bs-btn-color: var(--text-color);
+  --bs-btn-bg: var(--light-blue-bg);
+  --bs-btn-border-color: var(--light-blue-bg);
+  --bs-btn-hover-bg: #527194; /* A slightly darker light-blue */
+  --bs-btn-hover-border-color: #527194;
+  --bs-btn-active-bg: #527194;
+  --bs-btn-active-border-color: #527194;
+}
+
 .welcome-jumbotron {
   background-color: rgba(27, 38, 59, 0.7); /* semi-transparent medium blue */
   border: 1px solid var(--bs-border-color);
@@ -110,6 +119,12 @@ body {
   background-color: var(--bs-tertiary-bg);
   color: var(--text-color);
   border-color: var(--accent-color);
+}
+
+.status-badge {
+  background-color: var(--light-blue-bg);
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 .list-group-item {
@@ -144,6 +159,13 @@ body {
   text-align: center;
   font-size: 0.8rem;
   border: 1px dashed var(--bs-border-color);
+  border-radius: .25rem;
+}
+
+.community-game-art {
+  width: 45px;
+  height: 60px;
+  object-fit: cover;
   border-radius: .25rem;
 }
 

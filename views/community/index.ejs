@@ -20,7 +20,7 @@
                     <p class="card-text text-muted small mb-1">Recently Added:</p>
                     <div class="d-flex align-items-center">
                       <% if (user.latestGame.boxArt) { %>
-                        <img src="<%= user.latestGame.boxArt %>" alt="<%= user.latestGame.title %>" class="rounded me-3" style="width: 45px; height: 60px; object-fit: cover;">
+                        <img src="<%= user.latestGame.boxArt %>" alt="<%= user.latestGame.title %>" class="community-game-art me-3">
                       <% } %>
                       <div>
                         <strong class="d-block"><%= user.latestGame.title %></strong>

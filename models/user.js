@@ -9,11 +9,9 @@ const gameSchema = new mongoose.Schema({
   },
   platform: {
     type: String,
-    required: true,
   },
   dateAdded: {
     type: Date,
-    required: true,
   },
   status: {
     type: String,
