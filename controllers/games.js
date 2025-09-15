@@ -1,12 +1,9 @@
-// controllers/games.js
-
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 
 const User = require('../models/user.js');
 const axios = require('axios');
 
-// Middleware to check if a user is signed in.
 function isSignedIn(req, res, next) {
   if (!req.session.user) {
     return res.redirect('/auth/sign-in');
@@ -14,29 +11,22 @@ function isSignedIn(req, res, next) {
   next();
 }
 
-// Middleware to check if the logged-in user is the owner of the backlog.
-// This will protect the create, update, and delete routes.
 async function checkOwnership(req, res, next) {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) {
-            // If user not found, maybe a bad session.
             return req.session.destroy(() => res.redirect('/'));
         }
-        // Check if the user making the request is the owner of the page
         if (!req.session.user || user.id !== req.session.user.id) {
             return res.redirect(`/users/${req.session.user.id}/games`);
         }
-        // Attach the user document to the request for the next route handler to use.
         req.pageOwner = user;
         next();
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 }
 
-// Middleware to find the user whose backlog is being viewed.
 async function findPageOwner(req, res, next) {
     try {
         const user = await User.findById(req.params.userId);
@@ -46,18 +36,12 @@ async function findPageOwner(req, res, next) {
         req.pageOwner = user;
         next();
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 }
 
-// =============================================
-//                ROUTES
-// =============================================
-
 router.get('/', findPageOwner, async (req, res) => {
     try {
-        // Group games by their status for better organization in the view.
         const gamesByStatus = {
             'In Progress': [],
             'Pending': [],
@@ -66,27 +50,23 @@ router.get('/', findPageOwner, async (req, res) => {
         };
 
         req.pageOwner.games.forEach(game => {
-            // Default status to 'Pending' for any older data that might not have it.
             const status = game.status || 'Pending';
             if (gamesByStatus[status]) {
                 gamesByStatus[status].push(game);
             }
         });
 
-        // Render the index page, passing in the user's games
         res.render('games/index.ejs', {
             gamesByStatus,
             pageOwner: req.pageOwner,
             title: `${req.pageOwner.username}'s Backlog`,
         });
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
 
 router.get('/new', isSignedIn, (req, res) => {
-    // The pageOwner is the currently signed-in user.
     res.render('games/new.ejs', {
         pageOwner: req.session.user,
         title: 'Add New Game',
@@ -95,38 +75,30 @@ router.get('/new', isSignedIn, (req, res) => {
 
 router.post('/', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        // Validate that a title was provided.
         if (!req.body.title || !req.body.title.trim()) {
             return res.render('games/new.ejs', {
                 pageOwner: req.session.user,
                 title: 'Add New Game',
                 error: 'Title is a required field.',
-                game: req.body, // Pass back the submitted data to pre-fill the form
+                game: req.body,
             });
         }
 
-        // If a date isn't provided, default to the current date.
         if (!req.body.dateAdded) {
             req.body.dateAdded = new Date();
         }
 
-        // If the rating is an empty string, it means "No Rating" was selected.
-        // We should remove it from the request body so Mongoose doesn't try to save it.
         if (req.body.rating === '') {
             delete req.body.rating;
         }
 
-        // If a boxArt URL is provided, use it. Otherwise, fetch from RAWG.
         if (!req.body.boxArt) {
             try {
                 const response = await axios.get(`https://api.rawg.io/api/games?key=${process.env.RAWG_API_KEY}&search=${encodeURIComponent(req.body.title)}`);
                 if (response.data.results.length > 0) {
-                    // Use the background image from the first result
                     req.body.boxArt = response.data.results[0].background_image;
                 }
             } catch (apiError) {
-                // If the API call fails, we can just proceed without box art.
-                console.log('RAWG API call failed:', apiError.message);
             }
         }
 
@@ -134,7 +106,6 @@ router.post('/', isSignedIn, checkOwnership, async (req, res) => {
         await req.pageOwner.save();
         res.redirect(`/users/${req.pageOwner.id}/games`);
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
@@ -143,7 +114,6 @@ router.get('/:gameId', findPageOwner, async (req, res) => {
     try {
         const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
-            // If the game is not found, redirect to that user's game list
             return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
         res.render('games/show.ejs', {
@@ -152,20 +122,16 @@ router.get('/:gameId', findPageOwner, async (req, res) => {
             title: game.title,
         });
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
 
 router.delete('/:gameId', isSignedIn, checkOwnership, async (req, res) => {
     try {
-        // Use the .pull() method to remove the game from the subdocument array
-        // .pull() finds and removes all matching documents.
         req.pageOwner.games.pull({ _id: req.params.gameId });
         await req.pageOwner.save();
         res.redirect(`/users/${req.pageOwner.id}/games`);
         } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
@@ -174,7 +140,6 @@ router.get('/:gameId/edit', isSignedIn, checkOwnership, async (req, res) => {
     try {
         const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
-            // If the game is not found, redirect to that user's game list
             return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
         res.render('games/edit.ejs', {
@@ -183,7 +148,6 @@ router.get('/:gameId/edit', isSignedIn, checkOwnership, async (req, res) => {
             title: `Edit ${game.title}`,
         });
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
@@ -192,12 +156,9 @@ router.put('/:gameId', isSignedIn, checkOwnership, async (req, res) => {
     try {
         const game = req.pageOwner.games.id(req.params.gameId);
         if (!game) {
-            // If the game is not found, redirect to that user's game list
             return res.redirect(`/users/${req.pageOwner.id}/games`);
         }
 
-        // If the rating is an empty string, it means "No Rating" was selected.
-        // We need to explicitly unset it in the document.
         if (req.body.rating === '') {
             req.body.rating = undefined;
         }
@@ -206,7 +167,6 @@ router.put('/:gameId', isSignedIn, checkOwnership, async (req, res) => {
         await req.pageOwner.save();
         res.redirect(`/users/${req.pageOwner.id}/games/${req.params.gameId}`);
     } catch (error) {
-        console.log(error);
         res.redirect('/');
     }
 });
