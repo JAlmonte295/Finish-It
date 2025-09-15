@@ -1,41 +1,48 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="container mt-4">
-  <div class="row">
-    <div class="col-md-4">
-      <% if (game.boxArt) { %>
-        <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" class="img-fluid rounded shadow-sm mb-3">
-      <% } else { %>
-        <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="d-block text-decoration-none">
-          <div class="d-flex flex-column align-items-center justify-content-center p-4 rounded game-show-art-placeholder">
-            <h5 class="mb-1">No Image</h5>
-            <p class="mb-0">Click to add an image</p>
+  <div class="card">
+    <div class="card-body p-4">
+      <div class="row">
+        <div class="col-md-4">
+          <% if (game.boxArt) { %>
+            <img src="<%= game.boxArt %>" alt="<%= game.title %> box art" class="img-fluid rounded shadow-sm mb-3">
+          <% } else { %>
+            <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="d-block text-decoration-none">
+              <div class="d-flex flex-column align-items-center justify-content-center p-4 rounded game-show-art-placeholder">
+                <h5 class="mb-1">No Image</h5>
+                <p class="mb-0">Click to add an image</p>
+              </div>
+            </a>
+          <% } %>
+        </div>
+        <div class="col-md-8">
+          <h1><%= game.title %></h1>
+          <p class="lead text-muted"><%= game.platform %></p>
+          <hr>
+          <% if (game.notes) { %>
+            <p><strong>Notes:</strong></p>
+            <p><%= game.notes.replace(/\n/g, '<br>') %></p>
+            <hr>
+          <% } %>
+          <p><strong>Status:</strong> <span class="badge status-badge"><%= game.status %></span></p>
+          <% if (game.rating) { %>
+            <p><strong>Rating:</strong> 
+              <span class="visually-hidden"><%= game.rating %> out of 5 stars</span>
+              <span class="rating-star-filled" aria-hidden="true"><%= '★'.repeat(game.rating) %></span><span class="rating-star-empty" aria-hidden="true"><%= '★'.repeat(5 - game.rating) %></span>
+            </p>
+          <% } %>
+          <p><strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toLocaleDateString() : 'N/A' %></p>
+          <div class="mt-4">
+            <% if (user && user.id == pageOwner.id) { %>
+              <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="btn btn-secondary">Edit Game</a>
+              <form action="/users/<%= pageOwner.id %>/games/<%= game.id %>?_method=DELETE" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-danger">Delete Game</button>
+              </form>
+            <% } %>
+            <a href="/users/<%= pageOwner.id %>/games" class="btn btn-outline-secondary">Back to Backlog</a>
           </div>
-        </a>
-      <% } %>
-    </div>
-    <div class="col-md-8">
-      <h1><%= game.title %></h1>
-      <p class="lead text-muted"><%= game.platform %></p>
-      <hr>
-      <% if (game.notes) { %>
-        <p><strong>Notes:</strong></p>
-        <p><%= game.notes.replace(/\n/g, '<br>') %></p>
-        <hr>
-      <% } %>
-      <p><strong>Status:</strong> <span class="badge status-badge"><%= game.status %></span></p>
-      <% if (game.rating) { %>
-        <p><strong>Rating:</strong> <span class="rating-star-filled"><%= '★'.repeat(game.rating) %></span><span class="rating-star-empty"><%= '★'.repeat(5 - game.rating) %></span></p>
-      <% } %>
-      <p><strong>Date Added:</strong> <%= game.dateAdded ? game.dateAdded.toLocaleDateString() : 'N/A' %></p>
-      <div class="mt-4">
-        <% if (user && user.id == pageOwner.id) { %>
-          <a href="/users/<%= pageOwner.id %>/games/<%= game.id %>/edit" class="btn btn-secondary">Edit Game</a>
-          <form action="/users/<%= pageOwner.id %>/games/<%= game.id %>?_method=DELETE" method="POST" class="d-inline">
-            <button type="submit" class="btn btn-danger">Delete Game</button>
-          </form>
-        <% } %>
-        <a href="/users/<%= pageOwner.id %>/games" class="btn btn-outline-secondary">Back to Backlog</a>
+        </div>
       </div>
     </div>
   </div>

@@ -32,6 +32,7 @@
                 <h6 class="game-portrait-title" title="<%= game.title %>"><%= game.title %></h6>
                 <% if (game.rating) { %>
                   <div class="game-portrait-rating">
+                    <span class="visually-hidden"><%= game.rating %> out of 5 stars</span>
                     <span class="rating-star-filled"><%= '★'.repeat(game.rating) %></span><span class="rating-star-empty"><%= '★'.repeat(5 - game.rating) %></span>
                   </div>
                 <% } %>

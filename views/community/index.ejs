@@ -25,7 +25,9 @@
                       <div>
                         <strong class="d-block"><%= user.latestGame.title %></strong>
                         <% if (user.latestGame.rating) { %>
-                          <small class="rating-star-filled"><%= '★'.repeat(user.latestGame.rating) %></small><small class="rating-star-empty"><%= '★'.repeat(5 - user.latestGame.rating) %></small>
+                          <small><span class="visually-hidden"><%= user.latestGame.rating %> out of 5 stars</span>
+                          <span class="rating-star-filled" aria-hidden="true"><%= '★'.repeat(user.latestGame.rating) %></span><span class="rating-star-empty" aria-hidden="true"><%= '★'.repeat(5 - user.latestGame.rating) %></span>
+                          </small>
                         <% } %>
                       </div>
                     </div>
