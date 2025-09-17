@@ -22,7 +22,7 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background: linear-gradient(rgba(13, 27, 42, 0.88), rgba(13, 27, 42, 0.88)), url("/images/background.png");
   background-size: cover;
   background-position: center center;

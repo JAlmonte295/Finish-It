@@ -16,6 +16,7 @@ router.get('/:userId/profile', async (req, res) => {
         const user = await User.findById(req.params.userId);
         res.render('users/profile.ejs', { user });
     } catch (error) {
+        res.redirect('/');
     }
 });
 
